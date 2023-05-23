@@ -1,4 +1,3 @@
-# AdvancedSSCM
 
 # DISTANCE MINIMIZATION
 

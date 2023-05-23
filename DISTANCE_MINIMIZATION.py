@@ -19,8 +19,6 @@ xc = rnd.rand(n+1) * 200  # n location of clients + 1 for depot
 yc = rnd.rand(n+1) * 100  # 200 x 100 rectangle
 print(xc)
 print(yc)
- #CX = [ 1, 2, 3, 4]
- #CY = [ 1, 2, 3, 4]
 
 city_names = ["Depot", "Guadalajara", "Tijuana", "Mexico City", "Cancun", "Merida"] # Create array of cities
 

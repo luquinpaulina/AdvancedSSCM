@@ -1,3 +1,4 @@
+# THIS PROBLEM IS DISTANCE MINIMIZATION WITHOUT NAME OF CITIES
 # n is the number of clients to visit
 # N is the set of clients, with N = {1, 2,...n}
 # V set of vertices (or nodes), with V = {0} U N

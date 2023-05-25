@@ -63,7 +63,7 @@ mdl.addConstrs(u[i] >= q[i] for i in N)  # (14)
 mdl.addConstrs(u[i] <= Q for i in N)     # (14)
 
 # Add constraint to limit the number of vehicles (10)
-mdl.addConstr(quicksum(x[0, j] for j in N) == 1) # Just one vehicle
+mdl.addConstr(quicksum(x[0, j] for j in N) <= 2) # At most two vehicles
 
 mdl.optimize()
 

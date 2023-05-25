@@ -56,8 +56,8 @@ mdl.setObjective(quicksum(x[i, j] * c[i, j] for i, j in A)) # for each arc * the
 mdl.addConstrs(quicksum(x[i, j] for j in V if j != i) == 1 for i in N) # (11) each customer is visited at least once
 mdl.addConstrs(quicksum(x[i, j] for i in V if i != j) == 1 for j in N) # (12) each customer is visited at least once
 
-mdl.addConstrs((x[i, j] == 1) >> (u[i] + q[i] == u[j]) for i, j in A if i != 0 and j != 0) # elimination constraint, subtours
-#From Sara: I think you need to change q[i] to q[j] here
+mdl.addConstrs((x[i, j] == 1) >> (u[i] + q[j] == u[j]) for i, j in A if i != 0 and j != 0) # elimination constraint, subtours
+#From Sara: Changed q[i] to q[j] here
 
 mdl.addConstrs(u[i] >= q[i] for i in N)  # (14)
 mdl.addConstrs(u[i] <= Q for i in N)     # (14)

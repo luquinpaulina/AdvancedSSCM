@@ -19,11 +19,11 @@ Here is an explanation of the key components of the model:
   - `q`: The demand of each customer.
 
 - Constraints:
-  - Balance of flow constraint: The flow into and out of each vertex (except the depot) must be equal to the number of times it is visited by the vehicles.
+  - ~~Balance of flow constraint: The flow into and out of each vertex (except the depot) must be equal to the number of times it is visited by the vehicles.~~
   - Each customer is visited at least once: Each customer node must be visited by at least one vehicle.
-  - Elimination constraint (subtour elimination): Ensures that subtours, where a vehicle visits multiple customers and returns to the depot without serving all the customers, are not allowed.
+  - Elimination constraint (subtour elimination): ~~Ensures that subtours, where a vehicle visits multiple customers and returns to the depot without serving all the customers, are not allowed.~~ Ensures that every tour must visit the depot.
   - Vehicle load constraints: The cumulative load carried by each vehicle must be greater than or equal to the demand of each customer and less than or equal to the vehicle capacity.
-  - Constraint to limit the number of vehicles: Ensures that only one vehicle departs from the depot.
+  - Constraint to limit the number of vehicles: ~~Ensures that only one vehicle departs from the depot.~~ Ensures the number of vehicles to be at most 2.
 
 - Objective:
   - Minimize the total distance traveled by the vehicles. The objective function is defined as the sum of the distance (cost) multiplied by the binary decision variable `x` for each arc in A.

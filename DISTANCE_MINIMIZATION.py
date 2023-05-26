@@ -40,14 +40,6 @@ mdl = Model('CVRP')
 x = mdl.addVars(A, vtype=GRB.BINARY, name="x") # if a vehicle travels in an arc
 u = mdl.addVars(N, vtype=GRB.CONTINUOUS, name="u")
 
-# Create additional binary variables to represent flow
-# Binary decision variables representing the flow between vertices (arcs). These variables are used to enforce the balance of flow constraint.
-flow = mdl.addVars(A, vtype=GRB.BINARY)
-
-# Add the balance of flow constraint (13)
-mdl.addConstrs((quicksum(flow[i, j] for j in V if j != i) == x.sum(i, '*')) for i in N)
-mdl.addConstrs((quicksum(flow[j, i] for j in V if j != i) == x.sum('*', i)) for i in N)
-
 # Set the objective function
 mdl.modelSense = GRB.MINIMIZE
 mdl.setObjective(quicksum(x[i, j] * c[i, j] for i, j in A)) # for each arc * the cost(distance), for all the arcs in A
@@ -56,13 +48,14 @@ mdl.setObjective(quicksum(x[i, j] * c[i, j] for i, j in A)) # for each arc * the
 mdl.addConstrs(quicksum(x[i, j] for j in V if j != i) == 1 for i in N) # (11) each customer is visited at least once
 mdl.addConstrs(quicksum(x[i, j] for i in V if i != j) == 1 for j in N) # (12) each customer is visited at least once
 
-mdl.addConstrs((x[i, j] == 1) >> (u[i] + q[i] == u[j]) for i, j in A if i != 0 and j != 0) # elimination constraint, subtours
+mdl.addConstrs((x[i, j] == 1) >> (u[i] + q[j] == u[j]) for i, j in A if i != 0 and j != 0) # elimination constraint, subtours
+#From Sara: Changed q[i] to q[j] here
 
 mdl.addConstrs(u[i] >= q[i] for i in N)  # (14)
 mdl.addConstrs(u[i] <= Q for i in N)     # (14)
 
 # Add constraint to limit the number of vehicles (10)
-mdl.addConstr(quicksum(x[0, j] for j in N) == 1) # Just one vehicle
+mdl.addConstr(quicksum(x[0, j] for j in N) <= 2) # At most two vehicles
 
 mdl.optimize()
 

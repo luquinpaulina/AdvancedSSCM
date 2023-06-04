@@ -17,7 +17,7 @@ import numpy as np
 rnd = np.random
 rnd.seed(0)
 
-n = 5 # number of clients
+n = 10 # number of clients
 w = 3 # weight of vehicles
 g = 9.81 # gravity acceleration
 Cr = 0.01 #
@@ -28,14 +28,6 @@ z = a + g*math.sin(ar) + g*Cr*math.cos(ar) # constant
 # graph
 xc = rnd.rand(n+1) * 200  # x coordinate
 yc = rnd.rand(n+1) * 100  # y coordinate
-print(xc)
-print(yc)
-
-city_names = ["Depot", "Guadalajara", "Tijuana", "Mexico City", "Cancun", "Merida"] # Create array of cities
-
-
-for i, txt in enumerate(city_names):
-    plt.annotate(txt, (xc[i], yc[i]), textcoords="offset points", xytext=(0, 10), ha='center') # Just add cities names randomly
 
 
 N = [i for i in range(1, n + 1)] # Set of clients [1,2,3,4,5,6,7,8,9,10]
@@ -90,19 +82,21 @@ mdl.optimize()
 # Get active arcs
 active_arcs = [(i, j) for i, j in A if x[i, j]. X > 0]
 
-#active_arcs = [(i, j) for i, j in A if x[i, j].X > 0.9] # Find arcs where x[i, j] is approximately equal to 1
+# Set the figure size
+plt.figure(figsize=(10, 8))
 
 # Plot solution with active arcs
 for i, j in active_arcs:
     plt.plot([xc[i], xc[j]], [yc[i], yc[j]], color="g", zorder=0)
-    plt.annotate(city_names[j], (xc[j], yc[j]), textcoords="offset points", xytext=(0, 10), ha='center')
 
-plt.plot(xc[0], yc[0], c='r', marker='s') # That is the depot
-plt.scatter(xc[1:], yc[1:], c='b')        # These are the clients
+plt.plot(xc[0], yc[0], c='r', marker='s')  # Depot
+plt.scatter(xc[1:], yc[1:], c='b')  # Clients
 
-#Print graphical solution
-plt.xlabel("Distance X")
-plt.ylabel("Distance Y")
-plt.title("The Pollition-Routing Problem")
-
+for n in range(len(xc)):
+    plt.annotate(str(n), xy=(xc[n], yc[n]),
+                 xytext=(xc[n]+1,yc[n]+1),color="red")
 plt.show()
+
+
+print(active_arcs)
+

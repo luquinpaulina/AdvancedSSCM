@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 rnd = np.random
 rnd.seed(0)
 
-n = 10 # number of clients
+n = 5 # number of clients
 xc = rnd.rand(n+1)*200 # n location of clients + 1 for depot
 yc = rnd.rand(n+1)*100 # 200 x 100 rectangule
 

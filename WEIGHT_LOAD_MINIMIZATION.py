@@ -17,7 +17,7 @@ import numpy as np
 rnd = np.random
 rnd.seed(0)
 
-n = 10 # number of clients
+n = 5 # number of clients
 w = 3 # weight of vehicles
 g = 9.81 # gravity acceleration
 Cr = 0.01 #
@@ -28,6 +28,7 @@ z = a + g*math.sin(ar) + g*Cr*math.cos(ar) # constant
 # graph
 xc = rnd.rand(n+1) * 200  # x coordinate
 yc = rnd.rand(n+1) * 100  # y coordinate
+
 
 
 N = [i for i in range(1, n + 1)] # Set of clients [1,2,3,4,5,6,7,8,9,10]

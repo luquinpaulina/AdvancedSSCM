@@ -23,7 +23,8 @@ yc = rnd.rand(n+1)*100 # 200 x 100 rectangule - RANDOM LOCATION, WE DO NOT CARE
 
 
 N = [i for i in range(1,n+1)] # Set of clients [1,2,3,4,5,6,7,8,9,10]
-V = range(n+1)  # Set of vertices (cities)
+V = [0] + N # The union of 0 + N [0,1,2,3,4,5,6,7,8,9,10]
+#V = range(n+1)  # Set of vertices (cities)
 A = [(i, j) for i in V for j in V if i != j]  # Set of arcs
 
 Q = 6350  # vehicle capacity

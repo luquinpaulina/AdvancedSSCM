@@ -75,7 +75,8 @@ f = mdl.addVars(A, vtype=GRB.CONTINUOUS, name="f") # the amount of commodity flo
 # objective function
 mdl.modelSense = GRB.MINIMIZE
 #mdl.setObjective(quicksum(z * distance * w * x[i, j] for i, j in A) + quicksum(z * distance * f[i, j] for i, j in A)) #Avoid z
-mdl.setObjective(quicksum(distance[i,j] * w * x[i, j] for i, j in A) + quicksum(distance[i,j] * f[i, j] for i, j in A))
+#mdl.setObjective(quicksum(distance[i,j] * w * x[i, j] for i, j in A) + quicksum(distance[i,j] * f[i, j] for i, j in A))
+mdl.setObjective(quicksum(x[i, j] * distance[i, j] for i, j in A)) # for each arc * distance, for all the arcs in A
 
 # constraint 10 //one vehicle
 mdl.addConstr(quicksum(x[0, j] for j in N) <= 2)

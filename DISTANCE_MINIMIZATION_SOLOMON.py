@@ -122,7 +122,7 @@ for var_name, var_value in var_dict.items():
 
 print("Sum of all totals:", total_sum)
 
-#print(c) #uncomment to see correct distances
+print(c) #uncomment to see correct distances
 
 
 

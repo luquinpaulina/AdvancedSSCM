@@ -72,30 +72,6 @@ mdl.optimize()
 # Get active arcs
 active_arcs = [(i, j) for i, j in A if x[i, j]. X > 0]
 
-# Create arrays of city names
-city_names = ["Kingston_upon_Hull (0) ", "Pocklington (1)", "Brough (2)", "Selby (3)", "Boughton (4)", "Barton_upon_Humber (5)", "Darfield (6)", "Bentley (7)", "Watton (8)", "Cudworth (9)", "Haxby (10)"]
-
-# Set the figure size
-plt.figure(figsize=(10, 8))
-
-# Annotate city names
-for i, txt in enumerate(city_names):
-    plt.annotate(txt, (xc[i], yc[i]), textcoords="offset points", xytext=(0, 10), ha='center')
-
-# Plot solution with active arcs
-for i, j in active_arcs:
-    plt.plot([xc[i], xc[j]], [yc[i], yc[j]], color="g", zorder=0)
-    plt.annotate(city_names[j], (xc[j], yc[j]), textcoords="offset points", xytext=(0, 10), ha='center')
-plt.plot(xc[0], yc[0], c='r', marker='s')  # That is the depot
-plt.scatter(xc[1:], yc[1:], c='b')  # These are the clients
-
-#Print graphical solution
-plt.xlabel("Distance X")
-plt.ylabel("Distance Y")
-plt.title("DISTANCE MINIMIZATION")
-
-plt.show()
-
 #Print all my values
 print("Objective Function: ",str(round(mdl.ObjVal,2)))
 for a in mdl.getVars():
@@ -122,7 +98,36 @@ for var_name, var_value in var_dict.items():
 
 print("Sum of all totals:", total_sum)
 
-print(c) #uncomment to see correct distances
+# Create arrays of city names
+city_names = ["Kingston_upon_Hull (0) ", "Pocklington (1)", "Brough (2)", "Selby (3)", "Boughton (4)", "Barton_upon_Humber (5)", "Darfield (6)", "Bentley (7)", "Watton (8)", "Cudworth (9)", "Haxby (10)"]
+
+# Set the figure size
+plt.figure(figsize=(10, 8))
+
+# Annotate city names
+for i, txt in enumerate(city_names):
+    plt.annotate(txt, (xc[i], yc[i]), textcoords="offset points", xytext=(0, 10), ha='center')
+
+# Plot solution with active arcs
+for i, j in active_arcs:
+    plt.plot([xc[i], xc[j]], [yc[i], yc[j]], color="g", zorder=0)
+    plt.annotate(city_names[j], (xc[j], yc[j]), textcoords="offset points", xytext=(0, 10), ha='center')
+plt.plot(xc[0], yc[0], c='r', marker='s')  # That is the depot
+plt.scatter(xc[1:], yc[1:], c='b')  # These are the clients
+
+#Print graphical solution
+plt.xlabel("Distance X")
+plt.ylabel("Distance Y")
+plt.title("DISTANCE MINIMIZATION")
+
+# Get the legend text from the var_dict
+legend_text = [f"{var_name} = {var_value}" for var_name, var_value in var_dict.items()]
+
+plt.legend(legend_text, loc='best')
+
+plt.show()
+
+#print(c) #uncomment to see correct distances
 
 
 

@@ -1,4 +1,5 @@
 # THIS PROBLEM IS DISTANCE MINIMIZATION WITH SOLOMON REAL DATA
+# This is correct and it works to analyze the individual tours
 # n is the number of clients to visit
 # N is the set of clients, with N = {1, 2,...n}
 # V set of vertices (or nodes), with V = {0} U N
@@ -12,14 +13,14 @@ import pandas as pd
 from gurobipy import *
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 # Read the text file
-file_path = 'C:\\Users\\luqui\\PycharmProjects\\AdvancedSSCM\\DATA\\c20.txt'
+file_path = 'C:\\Users\\luqui\\PycharmProjects\\AdvancedSSCM\\DATA\\c1.txt'
 df = pd.read_csv(file_path, delim_whitespace=True)
 
 
 n = 10 # number of clients
-w = 80 # curb weight
 xc = df['XCOORD'].tolist() # n location of clients + 1 for depot - EXTRACTED FROM SOLOMON DATA
 yc = df['YCOORD'].tolist() # n location of clients + 1 for depot - EXTRACTED FROM SOLOMON DATA
 
@@ -36,11 +37,12 @@ mdl = Model('CVRP')
 
 # Create variables
 x = mdl.addVars(A, vtype=GRB.BINARY, name="x")  # If a vehicle travels in an arc
-f = mdl.addVars(A, vtype=GRB.CONTINUOUS, name="f") # the amount of commodity flowing at which a vehicle travels on this arc
+u = mdl.addVars(V, vtype=GRB.CONTINUOUS, name="u")
+# f = mdl.addVars(A, vtype=GRB.CONTINUOUS,name="f")  # the amount of commodity flowing at which a vehicle travels on this arc
 
 # objective function
 mdl.modelSense = GRB.MINIMIZE
-mdl.setObjective(quicksum(x[i, j] * c[i, j] for i, j in A)) # for each arc * distance, for all the arcs in A
+mdl.setObjective(quicksum(x[i, j] * c[i, j] for i, j in A))  # for each arc * distance, for all the arcs in A
 
 # constraint 10 //four vehicles
 mdl.addConstr(quicksum(x[0, j] for j in N) <= 4)
@@ -54,17 +56,13 @@ mdl.addConstrs(quicksum(x[i, j] for j in V if j != i) == 1 for i in N)
 mdl.addConstrs(quicksum(x[i, j] for i in V if i != j) == 1 for j in N)
 # Changed V to N as more than 1 truck is allowed to return to the depot
 
-# constraint 13
-mdl.addConstrs(quicksum(f[j, i] for j in V if j != i) - quicksum(f[i,j] for j in V if j != i) == q[i] for i in N)
-# changed formulation as the sums do only iterate over j not i
+mdl.addConstrs(
+    (x[i, j] == 1) >> (u[i] + q[j] == u[j]) for i, j in A if i != 0 and j != 0)  # elimination constraint, subtours
 
-# constraint 14
-mdl.addConstrs(q[j]*x[i,j] <= f[i,j] for (i,j) in A)
-mdl.addConstrs(f[i,j] <= (Q-q[i])*x[i,j] for (i,j) in A)
-# change u-formulation to constraints from the paper
-
-# constraint 20
-mdl.addConstrs(f[i,j] >= 0 for i, j in A)
+# mdl.addConstrs(u[i] >= q[i] for i in range(1, n+1))
+mdl.addConstrs(u[i] >= q[i] for i in N)  # (14)
+# mdl.addConstrs(u[i] <= Q for i in range(1, n+1))
+mdl.addConstrs(u[i] <= Q for i in N)  # (14)
 
 # Optimize the model
 mdl.optimize()
@@ -79,7 +77,7 @@ for a in mdl.getVars():
         print(str(a.varName)+"="+str(a.x))
 
 # Create a dictionary mapping varName f[a,b] to x value
-var_dict = {a.varName: a.x for a in mdl.getVars() if a.x > 0.9 and a.varName.startswith("f")}
+var_dict = {a.varName: a.x for a in mdl.getVars() if a.x > 0.9 and a.varName.startswith("x")}
 
 # Print the dictionary
 #for var_name, var_value in var_dict.items():
@@ -92,26 +90,23 @@ total_sum = 0
 for var_name, var_value in var_dict.items():
     i, j = [int(s) for s in var_name.split('[')[1].split(']')[0].split(',')]
     distance = c[i, j]
-    total = (var_value + 80) * distance
+    total = distance
     total_sum += total
     print(f"Total for {var_name}: {total}")
 
 print("Sum of all totals:", total_sum)
 
 # Create arrays of city names
-city_names = ["Kingston_upon_Hull (0) ", "Pocklington (1)", "Brough (2)", "Selby (3)", "Boughton (4)", "Barton_upon_Humber (5)", "Darfield (6)", "Bentley (7)", "Watton (8)", "Cudworth (9)", "Haxby (10)"]
+city_names = ["Depot (0) ", "Guadalajara (1)", "Colima (2)", "Michoacan (3)", "Tijuana (4)", "Merida (5)", "Monterrey (6)", "Aguascalientes (7)", "Queretaro (8)", "Mexico City (9)", "Guanajuato (10)"]
 
 # Set the figure size
 plt.figure(figsize=(10, 8))
 
-# Annotate city names
-for i, txt in enumerate(city_names):
-    plt.annotate(txt, (xc[i], yc[i]), textcoords="offset points", xytext=(0, 10), ha='center')
 
 # Plot solution with active arcs
 for i, j in active_arcs:
     plt.plot([xc[i], xc[j]], [yc[i], yc[j]], color="g", zorder=0)
-    plt.annotate(city_names[j], (xc[j], yc[j]), textcoords="offset points", xytext=(0, 10), ha='center')
+    plt.annotate(city_names[j], (xc[j], yc[j]), textcoords="offset points", xytext=(10, 15), ha='center')
 plt.plot(xc[0], yc[0], c='r', marker='s')  # That is the depot
 plt.scatter(xc[1:], yc[1:], c='b')  # These are the clients
 

@@ -1,4 +1,5 @@
 # THIS PROBLEM IS WEIGHT LOAD MINIMIZATION WITH SOLOMON REAL DATA
+# This is correct and it works to analyze the individual tours
 # n is the number of clients to visit
 # N is the set of clients, with N = {1, 2,...n}
 # V set of vertices (or nodes), with V = {0} U N
@@ -14,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read the text file
-file_path = 'C:\\Users\\luqui\\PycharmProjects\\AdvancedSSCM\\DATA\\c20.txt'
+file_path = 'C:\\Users\\luqui\\PycharmProjects\\AdvancedSSCM\\DATA\\c1.txt'
 df = pd.read_csv(file_path, delim_whitespace=True)
 
 
@@ -72,30 +73,6 @@ mdl.optimize()
 # Get active arcs
 active_arcs = [(i, j) for i, j in A if x[i, j]. X > 0]
 
-# Create arrays of city names
-city_names = ["Kingston_upon_Hull (0) ", "Pocklington (1)", "Brough (2)", "Selby (3)", "Boughton (4)", "Barton_upon_Humber (5)", "Darfield (6)", "Bentley (7)", "Watton (8)", "Cudworth (9)", "Haxby (10)"]
-
-# Set the figure size
-plt.figure(figsize=(10, 8))
-
-# Annotate city names
-for i, txt in enumerate(city_names):
-    plt.annotate(txt, (xc[i], yc[i]), textcoords="offset points", xytext=(0, 10), ha='center')
-
-# Plot solution with active arcs
-for i, j in active_arcs:
-    plt.plot([xc[i], xc[j]], [yc[i], yc[j]], color="g", zorder=0)
-    plt.annotate(city_names[j], (xc[j], yc[j]), textcoords="offset points", xytext=(0, 10), ha='center')
-plt.plot(xc[0], yc[0], c='r', marker='s')  # That is the depot
-plt.scatter(xc[1:], yc[1:], c='b')  # These are the clients
-
-#Print graphical solution
-plt.xlabel("Distance X")
-plt.ylabel("Distance Y")
-plt.title("WEIGHT LOAD MINIMIZATION")
-
-plt.show()
-
 #Print all my values
 print("Objective Function: ",str(round(mdl.ObjVal,2)))
 for a in mdl.getVars():
@@ -103,7 +80,7 @@ for a in mdl.getVars():
         print(str(a.varName)+"="+str(a.x))
 
 # Create a dictionary mapping varName f[a,b] to x value
-var_dict = {a.varName: a.x for a in mdl.getVars() if a.x > 0.9 and a.varName.startswith("f")}
+var_dict = {a.varName: a.x for a in mdl.getVars() if a.x > 0.9 and a.varName.startswith("x")}
 
 # Print the dictionary
 #for var_name, var_value in var_dict.items():
@@ -116,10 +93,36 @@ total_sum = 0
 for var_name, var_value in var_dict.items():
     i, j = [int(s) for s in var_name.split('[')[1].split(']')[0].split(',')]
     distance = c[i, j]
-    total = (var_value + 80) * distance
+    total = distance
     total_sum += total
     print(f"Total for {var_name}: {total}")
 
 print("Sum of all totals:", total_sum)
+
+# Create arrays of city names
+city_names = ["Depot (0) ", "Guadalajara (1)", "Colima (2)", "Michoacan (3)", "Tijuana (4)", "Merida (5)", "Monterrey (6)", "Aguascalientes (7)", "Queretaro (8)", "Mexico City (9)", "Guanajuato (10)"]
+
+# Set the figure size
+plt.figure(figsize=(10, 8))
+
+
+# Plot solution with active arcs
+for i, j in active_arcs:
+    plt.plot([xc[i], xc[j]], [yc[i], yc[j]], color="g", zorder=0)
+    plt.annotate(city_names[j], (xc[j], yc[j]), textcoords="offset points", xytext=(10, 15), ha='center')
+plt.plot(xc[0], yc[0], c='r', marker='s')  # That is the depot
+plt.scatter(xc[1:], yc[1:], c='b')  # These are the clients
+
+#Print graphical solution
+plt.xlabel("Distance X")
+plt.ylabel("Distance Y")
+plt.title("WEIGHT LOAD MINIMIZATION")
+
+# Get the legend text from the var_dict
+legend_text = [f"{var_name} = {var_value}" for var_name, var_value in var_dict.items()]
+
+plt.legend(legend_text, loc='best')
+
+plt.show()
 
 #print(c) #uncomment to see correct distances
